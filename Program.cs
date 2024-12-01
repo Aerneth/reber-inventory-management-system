@@ -38,6 +38,7 @@ namespace InventoryManagment.UI
         public const string mainMenuMessage = "\nPress Enter to return to the main menu.";
         public const string defaultItemNameMessage = "Default name";
         public const string defaultCategory = "Default category";
+        public const string invalidInput = "Invalid input; Setting to default value.";
         static void Main(string[] args)
         {
             FileHandler.LoadInventoryFromFile(filePath);
@@ -148,22 +149,24 @@ namespace InventoryManagment.UI
         {
             InventoryItem newItem = new InventoryItem()
             {
-                ItemName = defaultItemNameMessage,
-                Category = defaultCategory,
-                Quantity = 1,
-                Price = 0.00m,
-                MinStock = null,
-                MaxStock = null
+                ItemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim(),
+                Category = ConsoleHelper.Prompt("Enter Category: ").Trim(),
+                Quantity = GetValidUInt("Enter Quantity: ", 1),
+                Price = GetValidDecimal("Enter Price: ", 0.00m),
+                MinStock = GetOptionalUInt("(Optional) Enter Minimum Stock: "),
+                MaxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ")
             };
 
-            newItem.ItemName = ConsoleHelper.Prompt("Enter Item Name: ");
-            _ = string.IsNullOrWhiteSpace(newItem.ItemName) ? newItem.ItemName = "Default Name" : newItem.ItemName;
-            newItem.Category = ConsoleHelper.Prompt("Enter Category: ");
-            _ = string.IsNullOrWhiteSpace(newItem.Category) ? newItem.Category = "Default Category" : newItem.Category;
-            newItem.Quantity = uint.TryParse(ConsoleHelper.Prompt("Enter Quantity: "), out uint quantity) ? quantity : 1;
-            newItem.Price = decimal.TryParse(ConsoleHelper.Prompt("Enter Price: "), out decimal price) && price >= 0 ? price : 0.00m;
-            newItem.MinStock = uint.TryParse(ConsoleHelper.Prompt("(Optional) Enter Minimum Stock: "), out uint minStock) ? (uint?)minStock : null;
-            newItem.MaxStock = uint.TryParse(ConsoleHelper.Prompt("(Optional) Enter Maximum Stock: "), out uint maxStock) ? (uint?)maxStock : null;
+            if (newItem.MinStock.HasValue && newItem.MaxStock.HasValue && newItem.MinStock.Value > newItem.MaxStock.Value)
+            {
+                Console.WriteLine("Error: Minimum stock cannot be greater than maximum stock.");
+
+                newItem.MinStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
+                newItem.MaxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ");
+            }
+
+            newItem.ItemName = string.IsNullOrEmpty(newItem.ItemName) ? "Default Name" : newItem.ItemName;
+            newItem.Category = string.IsNullOrEmpty(newItem.Category) ? "Default Category" : newItem.Category;
 
             return newItem;
         }
@@ -188,6 +191,58 @@ namespace InventoryManagment.UI
 
             Console.WriteLine(mainMenuMessage);
             Console.ReadLine();
+        }
+
+        private static uint GetValidUInt(string prompt, uint defaultValue)
+        {
+
+            if (uint.TryParse(ConsoleHelper.Prompt(prompt), out uint value))
+            {
+                return value;
+            }
+            else
+            {
+                Console.WriteLine(invalidInput);
+                return defaultValue;
+            }
+
+        }
+
+        private static decimal GetValidDecimal(string prompt, decimal defaultValue)
+        {
+            if (decimal.TryParse(ConsoleHelper.Prompt(prompt), out decimal value) && value >= 0)
+            {
+                return value;
+            }
+            else
+            {
+                Console.WriteLine(invalidInput);
+                return defaultValue;
+            }
+        }
+
+        private static uint? GetOptionalUInt(string prompt)
+        {
+            while (true)
+            {
+                string input = ConsoleHelper.Prompt(prompt).Trim();
+
+                // If the input is empty or just whitespace, return null
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    return null;
+                }
+
+                // Try parsing the input to a uint
+                if (uint.TryParse(input, out uint result) && result >= 0)
+                {
+                    return result; // Return the valid uint
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid non-negative number.");
+                }
+            }
         }
     }
 }
