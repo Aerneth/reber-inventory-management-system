@@ -170,7 +170,8 @@ namespace InventoryManagment.UI
         {
 
             string itemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim();
-            Guid categoryId = GetValidGuid("Enter Category: ");
+            string categoryName = ConsoleHelper.Prompt("Enter Category Name: ").Trim();
+            Guid categoryId = GetOrCreateCategoryId(categoryName);
             uint quantity = GetValidUInt("Enter Quantity: ");
             decimal price = GetValidDecimal("Enter Price: ");
             uint? minStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
@@ -187,6 +188,26 @@ namespace InventoryManagment.UI
             InventoryItem newItem = new InventoryItem(itemName, categoryId, quantity, price, minStock, maxStock);
 
             return newItem;
+        }
+        
+        private static Guid GetOrCreateCategoryId(string categoryName)
+        {
+            // (replace this with actual category data)
+            var categories = new Dictionary<string, Guid>();
+
+            if (!categories.ContainsKey(categoryName))
+            {
+                // If category doesn't exist, create a new GUID for it and add it to the dictionary
+                var categoryId = Guid.NewGuid();
+                categories.Add(categoryName, categoryId);
+                Console.WriteLine($"New category '{categoryName}' created with ID: {categoryId}");
+            }
+            else
+            {
+                Console.WriteLine($"Category '{categoryName}' already exists.");
+            }
+
+            return categories[categoryName];
         }
         private static Guid GetValidGuid(string prompt)
         {
