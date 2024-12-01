@@ -3,22 +3,16 @@ using InventoryManagement.Storage;
 
 namespace InventoryManagment.UI
 {
-    using System;
-    using System.Collections.Generic;
-
-    internal static class Program
+    public static class ConsoleHelper
     {
-        static List<InventoryItem> inventory = new List<InventoryItem>();
-        static string filePath = "inventory.csv"; // Path for saving/loading inventory
-        public const string mainMenuMessage = "\nPress Enter to return to the main menu.";
-        public const string defaultItemNameMessage = "Item was not named at time of creation. Edit the item to add the correct name.";
-        public const string defaultCategory = "Default category";
-        static void Main(string[] args)
+        public static string Prompt(string message)
         {
-            FileHandler.LoadInventoryFromFile(filePath);
-            
-            while (true)
-            {
+            Console.Write(message);
+            return Console.ReadLine() ?? string.Empty;
+        }
+
+        public static void ShowMenu()
+        {
                 Console.Clear();
                 Console.WriteLine("Welcome to RIMS!");
                 Console.WriteLine("1. View Inventory");
@@ -29,8 +23,30 @@ namespace InventoryManagment.UI
                 Console.WriteLine("6. Load Inventory from File");
                 Console.WriteLine("7. Exit");
                 Console.Write("Please select an option (1-7): ");
+        }
 
-                string? choice = Console.ReadLine();
+        public static void ShowMessage(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+    }
+    internal static class Program
+    {
+        static List<InventoryItem> inventory = new List<InventoryItem>();
+        static string filePath = "inventory.csv"; // Path for saving/loading inventory
+        public const string mainMenuMessage = "\nPress Enter to return to the main menu.";
+        public const string defaultItemNameMessage = "Default name";
+        public const string defaultCategory = "Default category";
+        static void Main(string[] args)
+        {
+            FileHandler.LoadInventoryFromFile(filePath);
+            
+            while (true)
+            {
+                ConsoleHelper.ShowMenu();
+
+                string? choice = ConsoleHelper.Prompt("Please select an option (1-7): ");
 
                 switch (choice)
                 {
@@ -88,85 +104,7 @@ namespace InventoryManagment.UI
         {
             Console.Clear();
             Console.WriteLine("Add New Item");
-
-            InventoryItem newItem = new InventoryItem()
-            {
-                ItemName = defaultItemNameMessage,
-                Category = defaultCategory,
-                Quantity = 1,
-                Price = 0.00m,
-                MinStock = null,
-                MaxStock = null
-            };
-
-            Console.Write("Enter Item Name: ");
-            string? nameInput = Console.ReadLine();
-            newItem.ItemName = string.IsNullOrWhiteSpace(nameInput) ? defaultItemNameMessage : nameInput;
-
-            Console.Write("Enter Category: ");
-            string? categoryInput = Console.ReadLine();
-            newItem.Category = string.IsNullOrWhiteSpace(categoryInput) ? defaultCategory : categoryInput;
-
-            Console.Write("Enter Quantity: ");
-            string? quantityInput = Console.ReadLine();
-            if(!uint.TryParse(quantityInput, out uint quantity))
-            {
-                newItem.Quantity = 1;
-                Console.WriteLine("Invalid input for Quantity. Defaulting to a value of 1.");
-            }
-            else
-            {
-                newItem.Quantity = quantity;
-            }
-
-            Console.Write("Enter Price: ");
-            string? priceInput = Console.ReadLine();
-            if(!decimal.TryParse(priceInput, out decimal price) || price < 0)
-            {
-                newItem.Price = 0.00m;
-                Console.WriteLine("Invalid input for Price. Defaulting to a value of 0.00");
-            }
-            else
-            {
-                newItem.Price = price;
-            }
-
-            Console.Write("(Optional) Enter Minimum Stock: ");
-            string? minStockInput = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(minStockInput))
-            {
-                newItem.MinStock = null;
-            }
-            else
-            {
-                if (uint.TryParse(minStockInput, out uint minStock))
-                {
-                    newItem.MinStock = minStock;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input for Minimum Stock. Please enter a valid number.");
-                }
-            }
-
-            Console.Write("(Optional) Enter Maximum Stock: ");
-            string? maxStockInput = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(maxStockInput))
-            {
-                newItem.MaxStock = null;
-            }
-            else
-            {
-                if (uint.TryParse(maxStockInput, out uint maxStock))
-                {
-                    newItem.MaxStock = maxStock;
-                }
-                else
-                {
-                    Console.WriteLine("You've entered an invalid input for Maximum Stock. Please enter a valid number.");
-                }
-            }
-
+            InventoryItem newItem = GetItemFromUser();
             inventory.Add(newItem);
             Console.WriteLine("Item added successfully!");
             Console.WriteLine(mainMenuMessage);
@@ -185,21 +123,15 @@ namespace InventoryManagment.UI
             if (itemToEdit != null)
             {
                 Console.WriteLine($"Editing Item: {itemToEdit.ItemName}");
-                Console.Write("Enter new Name (leave empty to keep the current name): ");
-                string? name = Console.ReadLine();
-                if (!string.IsNullOrEmpty(name)) itemToEdit.ItemName = name;
 
-                Console.Write("Enter new Category (leave empty to keep current category): ");
-                string? category = Console.ReadLine();
-                if (!string.IsNullOrEmpty(category)) itemToEdit.Category = category;
+                InventoryItem updatedItem = GetItemFromUser();
 
-                Console.Write("Enter new Quantity (leave empty to keep current quantity): ");
-                string? quantity = Console.ReadLine();
-                if (!string.IsNullOrEmpty(quantity)) itemToEdit.Quantity = uint.Parse(quantity);
-
-                Console.Write("Enter new Price (leave empty to keep current price): ");
-                string? price = Console.ReadLine();
-                if (!string.IsNullOrEmpty(price)) itemToEdit.Price = decimal.Parse(price);
+                itemToEdit.ItemName = updatedItem.ItemName;
+                itemToEdit.Category = updatedItem.Category;
+                itemToEdit.Quantity = updatedItem.Quantity;
+                itemToEdit.Price = updatedItem.Price;
+                itemToEdit.MinStock = updatedItem.MinStock;
+                itemToEdit.MaxStock = updatedItem.MaxStock;
 
                 Console.WriteLine("The item has been updated successfully.");
             }
@@ -210,6 +142,30 @@ namespace InventoryManagment.UI
 
             Console.WriteLine(mainMenuMessage);
             Console.ReadLine();
+        }
+
+        private static InventoryItem GetItemFromUser()
+        {
+            InventoryItem newItem = new InventoryItem()
+            {
+                ItemName = defaultItemNameMessage,
+                Category = defaultCategory,
+                Quantity = 1,
+                Price = 0.00m,
+                MinStock = null,
+                MaxStock = null
+            };
+
+            newItem.ItemName = ConsoleHelper.Prompt("Enter Item Name: ");
+            _ = string.IsNullOrWhiteSpace(newItem.ItemName) ? newItem.ItemName = "Default Name" : newItem.ItemName;
+            newItem.Category = ConsoleHelper.Prompt("Enter Category: ");
+            _ = string.IsNullOrWhiteSpace(newItem.Category) ? newItem.Category = "Default Category" : newItem.Category;
+            newItem.Quantity = uint.TryParse(ConsoleHelper.Prompt("Enter Quantity: "), out uint quantity) ? quantity : 1;
+            newItem.Price = decimal.TryParse(ConsoleHelper.Prompt("Enter Price: "), out decimal price) && price >= 0 ? price : 0.00m;
+            newItem.MinStock = uint.TryParse(ConsoleHelper.Prompt("(Optional) Enter Minimum Stock: "), out uint minStock) ? (uint?)minStock : null;
+            newItem.MaxStock = uint.TryParse(ConsoleHelper.Prompt("(Optional) Enter Maximum Stock: "), out uint maxStock) ? (uint?)maxStock : null;
+
+            return newItem;
         }
         static void RemoveItem()
         {
