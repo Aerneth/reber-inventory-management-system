@@ -8,12 +8,12 @@ This project is a work in progress and will gradually include more functionality
 
 ## Features (Current and Planned)
 
-- [ ] Interactive console menu
-- [ ] Add items to inventory
-- [ ] View current inventory
-- [ ] Edit existing inventory items
-- [ ] Remove items from inventory
-- [ ] Save and load inventory to/from a file
+- [x] Interactive console menu
+- [x] Add items to inventory
+- [x] View current inventory
+- [x] Edit existing inventory items
+- [x] Remove items from inventory
+- [x] Save and load inventory to/from a file
 - [ ] Future support for database integration
 
 ---
