@@ -117,8 +117,7 @@ namespace InventoryManagment.UI
             Console.Clear();
             Console.WriteLine("Edit Item");
 
-            Console.Write("Enter the ID of the item you wish to edit: ");
-            string? id = Console.ReadLine();
+            Guid? id = GetValidGuid("Enter the ID of the item you wish to edit: ");
 
             var itemToEdit = inventory.Find(item => item.ItemId == id);
             if (itemToEdit != null)
@@ -128,7 +127,7 @@ namespace InventoryManagment.UI
                 InventoryItem updatedItem = GetItemFromUser();
 
                 itemToEdit.ItemName = updatedItem.ItemName;
-                itemToEdit.Category = updatedItem.Category;
+                itemToEdit.CategoryId = updatedItem.CategoryId;
                 itemToEdit.Quantity = updatedItem.Quantity;
                 itemToEdit.Price = updatedItem.Price;
                 itemToEdit.MinStock = updatedItem.MinStock;
@@ -145,38 +144,12 @@ namespace InventoryManagment.UI
             Console.ReadLine();
         }
 
-        private static InventoryItem GetItemFromUser()
-        {
-            InventoryItem newItem = new InventoryItem()
-            {
-                ItemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim(),
-                Category = ConsoleHelper.Prompt("Enter Category: ").Trim(),
-                Quantity = GetValidUInt("Enter Quantity: "),
-                Price = GetValidDecimal("Enter Price: "),
-                MinStock = GetOptionalUInt("(Optional) Enter Minimum Stock: "),
-                MaxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ")
-            };
-
-            if (newItem.MinStock.HasValue && newItem.MaxStock.HasValue && newItem.MinStock.Value > newItem.MaxStock.Value)
-            {
-                Console.WriteLine("Error: Minimum stock cannot be greater than maximum stock.");
-
-                newItem.MinStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
-                newItem.MaxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ");
-            }
-
-            newItem.ItemName = string.IsNullOrEmpty(newItem.ItemName) ? "Default Name" : newItem.ItemName;
-            newItem.Category = string.IsNullOrEmpty(newItem.Category) ? "Default Category" : newItem.Category;
-
-            return newItem;
-        }
         static void RemoveItem()
         {
             Console.Clear();
             Console.WriteLine("Remove Item");
 
-            Console.Write("Enter the ID of the item you wish to remove: ");
-            string? id = Console.ReadLine();
+            Guid? id = GetValidGuid("Enter the ID of the item you wish to remove: ");
 
             var itemToRemove = inventory.Find(item => item.ItemId == id);
             if (itemToRemove != null)
@@ -191,6 +164,43 @@ namespace InventoryManagment.UI
 
             Console.WriteLine(mainMenuMessage);
             Console.ReadLine();
+        }
+
+        private static InventoryItem GetItemFromUser()
+        {
+
+            string itemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim();
+            Guid categoryId = GetValidGuid("Enter Category: ");
+            uint quantity = GetValidUInt("Enter Quantity: ");
+            decimal price = GetValidDecimal("Enter Price: ");
+            uint? minStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
+            uint? maxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ");
+
+            if (minStock.HasValue && maxStock.HasValue && minStock.Value > maxStock.Value)
+            {
+                Console.WriteLine("Error: Minimum stock cannot be greater than maximum stock.");
+
+                minStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
+                maxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ");
+            }
+
+            InventoryItem newItem = new InventoryItem(itemName, categoryId, quantity, price, minStock, maxStock);
+
+            return newItem;
+        }
+        private static Guid GetValidGuid(string prompt)
+        {
+            while (true)
+            {
+                if (Guid.TryParse(ConsoleHelper.Prompt(prompt), out Guid value))
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
+            }
         }
 
         private static uint GetValidUInt(string prompt)
