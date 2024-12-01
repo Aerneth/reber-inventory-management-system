@@ -151,8 +151,8 @@ namespace InventoryManagment.UI
             {
                 ItemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim(),
                 Category = ConsoleHelper.Prompt("Enter Category: ").Trim(),
-                Quantity = GetValidUInt("Enter Quantity: ", 1),
-                Price = GetValidDecimal("Enter Price: ", 0.00m),
+                Quantity = GetValidUInt("Enter Quantity: "),
+                Price = GetValidDecimal("Enter Price: "),
                 MinStock = GetOptionalUInt("(Optional) Enter Minimum Stock: "),
                 MaxStock = GetOptionalUInt("(Optional) Enter Maximum Stock: ")
             };
@@ -193,31 +193,33 @@ namespace InventoryManagment.UI
             Console.ReadLine();
         }
 
-        private static uint GetValidUInt(string prompt, uint defaultValue)
+        private static uint GetValidUInt(string prompt)
         {
-
-            if (uint.TryParse(ConsoleHelper.Prompt(prompt), out uint value))
+            while (true)
             {
-                return value;
+                if (uint.TryParse(ConsoleHelper.Prompt(prompt), out uint value))
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
             }
-            else
-            {
-                Console.WriteLine(invalidInput);
-                return defaultValue;
-            }
-
         }
 
-        private static decimal GetValidDecimal(string prompt, decimal defaultValue)
+        private static decimal GetValidDecimal(string prompt)
         {
-            if (decimal.TryParse(ConsoleHelper.Prompt(prompt), out decimal value) && value >= 0)
+            while (true)
             {
-                return value;
-            }
-            else
-            {
-                Console.WriteLine(invalidInput);
-                return defaultValue;
+                if (decimal.TryParse(ConsoleHelper.Prompt(prompt), out decimal value) && value >= 0)
+                {
+                    return value;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
             }
         }
 

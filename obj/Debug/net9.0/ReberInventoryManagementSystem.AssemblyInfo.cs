@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ReberInventoryManagementSystem")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d6cb927e9b4137993b00d9de0b989a36248979f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52902b30efcea1a893f6e3752f25425d6c7054b7")]
 [assembly: System.Reflection.AssemblyProductAttribute("ReberInventoryManagementSystem")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ReberInventoryManagementSystem")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
