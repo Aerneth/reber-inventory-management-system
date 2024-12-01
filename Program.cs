@@ -8,14 +8,14 @@ namespace InventoryManagment.UI
 
     internal static class Program
     {
-        static List<InventoryManagement.Core.InventoryItem> inventory = new List<InventoryManagement.Core.InventoryItem>();
+        static List<InventoryItem> inventory = new List<InventoryItem>();
         static string filePath = "inventory.csv"; // Path for saving/loading inventory
         public const string mainMenuMessage = "\nPress Enter to return to the main menu.";
         public const string defaultItemNameMessage = "Item was not named at time of creation. Edit the item to add the correct name.";
         public const string defaultCategory = "Default category";
         static void Main(string[] args)
         {
-            InventoryManagement.Storage.FileHandler.LoadInventoryFromFile(filePath);
+            FileHandler.LoadInventoryFromFile(filePath);
             
             while (true)
             {
@@ -47,10 +47,10 @@ namespace InventoryManagment.UI
                         RemoveItem();
                         break;
                     case "5":
-                        InventoryManagement.Storage.FileHandler.SaveInventoryToFile(inventory, filePath);
+                        FileHandler.SaveInventoryToFile(inventory, filePath);
                         break;
                     case "6":
-                        inventory = InventoryManagement.Storage.FileHandler.LoadInventoryFromFile(filePath);
+                        inventory = FileHandler.LoadInventoryFromFile(filePath);
                         break;
                     case "7":
                         Console.WriteLine("Exiting RIMS...");
