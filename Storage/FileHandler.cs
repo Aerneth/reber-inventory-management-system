@@ -10,10 +10,10 @@ namespace InventoryManagement.Storage
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .Build();
 
-            var connectionString = config.GetConnectionString("DefaultConnection");
+            var connectionString = config.GetConnectionString("DefaultDBConnection");
 
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -146,17 +146,20 @@ namespace InventoryManagement.Storage
                     {
                         while (reader.Read())
                         {
-                            var item = new InventoryItem(
-                                reader["ItemName"].ToString(),
-                                Guid.Parse(reader["CategoryId"].ToString()),
-                                (uint)reader["Quantity"],
-                                (decimal)reader["Price"],
-                                reader["MinStock"] as uint?,
-                                reader["MaxStock"] as uint?
-                            );
+                            var itemName = reader["ItemName"] != DBNull.Value ? reader["ItemName"].ToString() : "Unknown";
+                            var categoryId = reader["CategoryId"] != DBNull.Value ? Guid.Parse(reader["CategoryId"].ToString()) : Guid.Empty;
+                            var quantity = reader["Quantity"] != DBNull.Value ? Convert.ToUInt32(reader["Quantity"]) : 0;
+                            var price = reader["Price"] != DBNull.Value ? Convert.ToDecimal(reader["Price"]) : 0.00m;
+                            var minStock = reader["MinStock"] != DBNull.Value ? Convert.ToUInt32(reader["MinStock"]) : 0;
+                            var maxStock = reader["MaxStock"] != DBNull.Value ? Convert.ToUInt32(reader["MaxStock"]) : 0;
 
-                            item.SetItemId(Guid.Parse(reader["ItemId"].ToString()));
+                            var item = new InventoryItem(itemName, categoryId, quantity, price, minStock, maxStock);
 
+                            
+                            if (reader["ItemId"] != DBNull.Value)
+                            {
+                                item.SetItemId(Guid.Parse(reader["ItemId"].ToString()));
+                            }
                             inventoryItems.Add(item);
                         }
                     }
@@ -200,7 +203,7 @@ namespace InventoryManagement.Storage
 
             Console.WriteLine($"Inventory item {item.ItemName} updated in the database.");
         }
-        public static void SaveInventoryToFile(List<InventoryItem> inventory, string filePath)
+/*        public static void SaveInventoryToFile(List<InventoryItem> inventory, string filePath)
         {
             using (StreamWriter writer = new StreamWriter(filePath))
             {
@@ -243,6 +246,6 @@ namespace InventoryManagement.Storage
                 }
             }
             return inventory;
-        }
+        }*/
     }
 }

@@ -34,14 +34,15 @@ namespace InventoryManagment.UI
     internal static class Program
     {
         static List<InventoryItem> inventory = new List<InventoryItem>();
-        static string filePath = "inventory.csv"; // Path for saving/loading inventory
+        //static string filePath = "inventory.csv"; // Path for saving/loading inventory
         public const string mainMenuMessage = "\nPress Enter to return to the main menu.";
         public const string defaultItemNameMessage = "Default name";
         public const string defaultCategory = "Default category";
         public const string invalidInput = "Invalid input; Setting to default value.";
         static void Main(string[] args)
         {
-            FileHandler.LoadInventoryFromFile(filePath);
+            //FileHandler.LoadInventoryFromFile(filePath);
+            FileHandler.InitializeDatabase();
             
             while (true)
             {
@@ -64,10 +65,10 @@ namespace InventoryManagment.UI
                         RemoveItem();
                         break;
                     case "5":
-                        FileHandler.SaveInventoryToFile(inventory, filePath);
+                        //FileHandler.SaveInventoryToFile(inventory, filePath);
                         break;
                     case "6":
-                        inventory = FileHandler.LoadInventoryFromFile(filePath);
+                        //inventory = FileHandler.LoadInventoryFromFile(filePath);
                         break;
                     case "7":
                         Console.WriteLine("Exiting RIMS...");
@@ -85,13 +86,15 @@ namespace InventoryManagment.UI
             Console.Clear();
             Console.WriteLine("Current Inventory:");
 
-            if (inventory.Count == 0)
+            var inventoryFromDb = FileHandler.GetAllInventoryItems();
+
+            if (inventoryFromDb.Count == 0)
             {
                 Console.WriteLine("There are not currently any items in the inventory.");
             }
             else
             {
-                foreach (var item in inventory)
+                foreach (var item in inventoryFromDb)
                 {
                     Console.WriteLine(item);
                 }
@@ -108,6 +111,7 @@ namespace InventoryManagment.UI
             InventoryItem newItem = GetItemFromUser();
             inventory.Add(newItem);
             Console.WriteLine("Item added successfully!");
+            FileHandler.InsertInventoryItem(newItem);
             Console.WriteLine(mainMenuMessage);
             Console.ReadLine();
         }

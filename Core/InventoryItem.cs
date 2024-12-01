@@ -37,7 +37,7 @@ namespace InventoryManagement.Core
             string minStockDisplay = MinStock.HasValue ? MinStock.Value.ToString() : "Not Set";
             string maxStockDisplay = MaxStock.HasValue ? MaxStock.Value.ToString() : "Not Set";
 
-            return $"ID: {ItemId}, Name: {ItemName}, Category: {CategoryId}, " + $"Quantity: {Quantity}, Price: {Price:C}, MinStock: {minStockDisplay}, MaxStock: {maxStockDisplay}";
+            return $"ID: {ItemId}, Name: {ItemName}, Category: {CategoryId}, " + $"Quantity: {Quantity}, Price: {Price:F4}, MinStock: {minStockDisplay}, MaxStock: {maxStockDisplay}";
         }
     }
     public class Category
