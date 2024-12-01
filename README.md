@@ -4,6 +4,8 @@ A **console-based inventory management system** built in C#. This project is des
 
 This project is a work in progress and will gradually include more functionality as my C# skills advance.
 
+Created with assitance from ChatGPT AI.
+
 ---
 
 ## Features (Current and Planned)
