@@ -197,22 +197,20 @@ namespace InventoryManagment.UI
         
         private static Guid GetOrCreateCategoryId(string categoryName)
         {
-            // (replace this with actual category data)
-            var categories = new Dictionary<string, Guid>();
+            var existingCategory = FileHandler.GetCategoryByName(categoryName);
 
-            if (!categories.ContainsKey(categoryName))
+            if (existingCategory != null)
             {
-                // If category doesn't exist, create a new GUID for it and add it to the dictionary
-                var categoryId = Guid.NewGuid();
-                categories.Add(categoryName, categoryId);
-                Console.WriteLine($"New category '{categoryName}' created with ID: {categoryId}");
+                Console.WriteLine($"Category '{categoryName}' already exists with ID: {existingCategory.CategoryId}");
+                return existingCategory.CategoryId;
             }
             else
             {
-                Console.WriteLine($"Category '{categoryName}' already exists.");
+                Guid newCategoryId = Guid.NewGuid();
+                FileHandler.InsertCategory(newCategoryId, categoryName);
+                Console.WriteLine($"New category '{categoryName}' created with ID: {newCategoryId}");
+                return newCategoryId;
             }
-
-            return categories[categoryName];
         }
         private static Guid GetValidGuid(string prompt)
         {

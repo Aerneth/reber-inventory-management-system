@@ -45,15 +45,19 @@ namespace InventoryManagement.Core
         public Guid CategoryId { get; private set; }
         public string CategoryName { get; set; }
 
+        public Category(Guid categoryId, string categoryName)
+        {
+            CategoryId = categoryId;
+            CategoryName = categoryName;
+        }
         public Category(string categoryName)
         {
             CategoryId = Guid.NewGuid();
             CategoryName = categoryName;
         }
-
         public override string ToString()
         {
             return CategoryName;
         }
-    }   
+    }
 }

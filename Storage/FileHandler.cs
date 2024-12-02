@@ -241,5 +241,57 @@ namespace InventoryManagement.Storage
             }
             return null;
         }
+        public static Category? GetCategoryByName(string categoryName)
+        {
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string selectQuery = "SELECT * FROM Categories WHERE CategoryName = @CategoryName";
+
+                using (var cmd = new SQLiteCommand(selectQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@CategoryName", categoryName);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            var categoryId = Guid.Parse(reader["CategoryId"].ToString());
+                            var categoryNameFromDb = reader["CategoryName"].ToString();
+                            return new Category(categoryId, categoryNameFromDb);
+                        }
+                    }
+                }
+            }
+
+            return null; // If the category doesn't exist
+        }
+        public static void InsertCategory(Guid categoryId, string categoryName)
+        {
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string insertQuery = @"
+                    INSERT INTO Categories (CategoryId, CategoryName)
+                    VALUES (@CategoryId, @CategoryName);
+                ";
+
+                using (var cmd = new SQLiteCommand(insertQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@CategoryId", categoryId.ToString());
+                    cmd.Parameters.AddWithValue("@CategoryName", categoryName);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            Console.WriteLine($"Category '{categoryName}' inserted into the database.");
+        }
     }
 }
