@@ -41,7 +41,6 @@ namespace InventoryManagment.UI
         public const string invalidInput = "Invalid input; Setting to default value.";
         static void Main(string[] args)
         {
-            //FileHandler.LoadInventoryFromFile(filePath);
             FileHandler.InitializeDatabase();
             
             while (true)
@@ -65,10 +64,8 @@ namespace InventoryManagment.UI
                         RemoveItem();
                         break;
                     case "5":
-                        //FileHandler.SaveInventoryToFile(inventory, filePath);
                         break;
                     case "6":
-                        //inventory = FileHandler.LoadInventoryFromFile(filePath);
                         break;
                     case "7":
                         Console.WriteLine("Exiting RIMS...");
