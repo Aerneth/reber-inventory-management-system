@@ -44,16 +44,23 @@ namespace InventoryManagement.Core
     {
         public Guid CategoryId { get; private set; }
         public string CategoryName { get; set; }
+        public Guid? ParentCategoryId { get; set; }
 
-        public Category(Guid categoryId, string categoryName)
-        {
-            CategoryId = categoryId;
-            CategoryName = categoryName;
-        }
         public Category(string categoryName)
         {
             CategoryId = Guid.NewGuid();
             CategoryName = categoryName;
+            ParentCategoryId = null;
+        }
+        public Category(string categoryName, Guid parentCategoryId)
+        {
+            CategoryId = Guid.NewGuid();
+            CategoryName = categoryName;
+            ParentCategoryId = parentCategoryId; // Set the parent category ID
+        }
+            public void SetCategoryId(Guid categoryId)
+        {
+            CategoryId = categoryId;
         }
         public override string ToString()
         {

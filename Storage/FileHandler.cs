@@ -260,16 +260,21 @@ namespace InventoryManagement.Storage
                         if (reader.Read())
                         {
                             var categoryId = Guid.Parse(reader["CategoryId"].ToString());
-                            var categoryNameFromDb = reader["CategoryName"].ToString();
-                            return new Category(categoryId, categoryNameFromDb);
+                            var name = reader["CategoryName"].ToString();
+                            var parentId = reader["ParentId"] != DBNull.Value ? Guid.Parse(reader["ParentId"].ToString()) : (Guid?)null;
+
+                            var category = new Category(name, parentId ?? Guid.Empty);
+                            category.SetCategoryId(categoryId);  // Set the CategoryId using the setter method
+
+                            return category;
                         }
                     }
                 }
             }
-
-            return null; // If the category doesn't exist
+            return null;
         }
-        public static void InsertCategory(Guid categoryId, string categoryName)
+
+        public static void InsertCategory(Guid categoryId, string categoryName, Guid? parentId = null)
         {
             var connectionString = GetDatabaseConnectionString();
 
@@ -278,19 +283,19 @@ namespace InventoryManagement.Storage
                 connection.Open();
 
                 string insertQuery = @"
-                    INSERT INTO Categories (CategoryId, CategoryName)
-                    VALUES (@CategoryId, @CategoryName);
+                    INSERT INTO Categories (CategoryId, CategoryName, ParentId)
+                    VALUES (@CategoryId, @CategoryName, @ParentId);
                 ";
 
                 using (var cmd = new SQLiteCommand(insertQuery, connection))
                 {
                     cmd.Parameters.AddWithValue("@CategoryId", categoryId.ToString());
                     cmd.Parameters.AddWithValue("@CategoryName", categoryName);
+                    cmd.Parameters.AddWithValue("@ParentId", parentId ?? (object)DBNull.Value);
 
                     cmd.ExecuteNonQuery();
                 }
             }
-
             Console.WriteLine($"Category '{categoryName}' inserted into the database.");
         }
     }
