@@ -173,10 +173,41 @@ namespace InventoryManagment.UI
 
         private static InventoryItem GetItemFromUser()
         {
-
             string itemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim();
             string categoryName = ConsoleHelper.Prompt("Enter Category Name: ").Trim();
-            Guid categoryId = GetOrCreateCategoryId(categoryName);
+            
+            bool isChildCategory = ConsoleHelper.Prompt("Is this a child category? (y/n): ").Trim().ToLower() == "y";
+            Guid parentCategoryId = Guid.Empty;
+
+            if (isChildCategory)
+            {
+                string parentCategoryName = ConsoleHelper.Prompt("Enter Parent Category Name: ").Trim();
+                var parentCategory = FileHandler.GetCategoryByName(parentCategoryName);
+
+                if (parentCategory != null)
+                {
+                    parentCategoryId = parentCategory.CategoryId;
+                    Console.WriteLine($"Parent category '{parentCategoryName}' found with ID: {parentCategoryId}");
+                }
+                else
+                {
+                    Console.WriteLine("Parent category not found.");
+
+                    bool createParent = ConsoleHelper.Prompt("Would you like to create a parent category? (y/n): ").Trim().ToLower() == "y";
+                    if (createParent)
+                    {
+                        parentCategoryId = CreateNewParentCategory(parentCategoryName);
+                        Console.WriteLine($"New parent category '{parentCategoryName}' created with ID: {parentCategoryId}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("No parent category created. The item will be added without a parent.");
+                    }
+                }
+            }
+
+            Guid categoryId = GetOrCreateCategoryId(categoryName, parentCategoryId);
+
             uint quantity = GetValidUInt("Enter Quantity: ");
             decimal price = GetValidDecimal("Enter Price: ");
             uint? minStock = GetOptionalUInt("(Optional) Enter Minimum Stock: ");
@@ -194,8 +225,7 @@ namespace InventoryManagment.UI
 
             return newItem;
         }
-        
-        private static Guid GetOrCreateCategoryId(string categoryName)
+        public static Guid GetOrCreateCategoryId(string categoryName, Guid? parentCategoryId = null)
         {
             var existingCategory = FileHandler.GetCategoryByName(categoryName);
 
@@ -207,11 +237,20 @@ namespace InventoryManagment.UI
             else
             {
                 Guid newCategoryId = Guid.NewGuid();
-                FileHandler.InsertCategory(newCategoryId, categoryName);
+                FileHandler.InsertCategory(newCategoryId, categoryName, parentCategoryId);
                 Console.WriteLine($"New category '{categoryName}' created with ID: {newCategoryId}");
+
                 return newCategoryId;
             }
         }
+
+        private static Guid CreateNewParentCategory(string parentCategoryName)
+        {
+            Category newParentCategory = new Category(parentCategoryName);
+            FileHandler.InsertCategory(newParentCategory.CategoryId, newParentCategory.CategoryName, null);
+            return newParentCategory.CategoryId;
+        }
+
         private static Guid GetValidGuid(string prompt)
         {
             while (true)

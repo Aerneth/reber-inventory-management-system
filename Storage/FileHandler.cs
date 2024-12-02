@@ -261,10 +261,12 @@ namespace InventoryManagement.Storage
                         {
                             var categoryId = Guid.Parse(reader["CategoryId"].ToString());
                             var name = reader["CategoryName"].ToString();
-                            var parentId = reader["ParentId"] != DBNull.Value ? Guid.Parse(reader["ParentId"].ToString()) : (Guid?)null;
+                            var parentId = reader["ParentId"] != DBNull.Value
+                                ? Guid.Parse(reader["ParentId"].ToString())
+                                : (Guid?)null;
 
                             var category = new Category(name, parentId ?? Guid.Empty);
-                            category.SetCategoryId(categoryId);  // Set the CategoryId using the setter method
+                            category.SetCategoryId(categoryId);
 
                             return category;
                         }
@@ -291,7 +293,7 @@ namespace InventoryManagement.Storage
                 {
                     cmd.Parameters.AddWithValue("@CategoryId", categoryId.ToString());
                     cmd.Parameters.AddWithValue("@CategoryName", categoryName);
-                    cmd.Parameters.AddWithValue("@ParentId", parentId ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@ParentId", parentId.HasValue ? parentId.Value.ToString() : (object)DBNull.Value);
 
                     cmd.ExecuteNonQuery();
                 }

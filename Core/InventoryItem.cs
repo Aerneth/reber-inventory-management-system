@@ -45,7 +45,6 @@ namespace InventoryManagement.Core
         public Guid CategoryId { get; private set; }
         public string CategoryName { get; set; }
         public Guid? ParentCategoryId { get; set; }
-
         public Category(string categoryName)
         {
             CategoryId = Guid.NewGuid();
@@ -56,15 +55,15 @@ namespace InventoryManagement.Core
         {
             CategoryId = Guid.NewGuid();
             CategoryName = categoryName;
-            ParentCategoryId = parentCategoryId; // Set the parent category ID
+            ParentCategoryId = parentCategoryId;
         }
-            public void SetCategoryId(Guid categoryId)
+        public void SetCategoryId(Guid categoryId)
         {
             CategoryId = categoryId;
         }
         public override string ToString()
         {
-            return CategoryName;
+            return $"{CategoryName} (ID: {CategoryId})";
         }
     }
 }
