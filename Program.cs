@@ -115,36 +115,46 @@ namespace InventoryManagment.UI
             Console.WriteLine(mainMenuMessage);
             Console.ReadLine();
         }
-
         static void EditItem()
         {
             Console.Clear();
             Console.WriteLine("Edit Item");
 
-            Guid? id = GetValidGuid("Enter the ID of the item you wish to edit: ");
+            Guid id = GetValidGuid("Enter the ID of the item you wish to edit: ");
 
-            var itemToEdit = inventory.Find(item => item.ItemId == id);
+            InventoryItem? itemToEdit = FileHandler.GetInventoryItemById(id);
+
             if (itemToEdit != null)
             {
                 Console.WriteLine($"Editing Item: {itemToEdit.ItemName}");
 
-                InventoryItem updatedItem = GetItemFromUser();
+                Console.WriteLine("Leave fields blank to keep the current value.");
 
-                itemToEdit.ItemName = updatedItem.ItemName;
-                itemToEdit.CategoryId = updatedItem.CategoryId;
-                itemToEdit.Quantity = updatedItem.Quantity;
-                itemToEdit.Price = updatedItem.Price;
-                itemToEdit.MinStock = updatedItem.MinStock;
-                itemToEdit.MaxStock = updatedItem.MaxStock;
+                string itemName = ConsoleHelper.Prompt($"Enter new name (Current: {itemToEdit.ItemName}): ").Trim();
+                string categoryName = ConsoleHelper.Prompt($"Enter new category name (Current: {itemToEdit.CategoryId}): ").Trim();
+                uint? quantity = GetOptionalUInt($"Enter new quantity (Current: {itemToEdit.Quantity}): ");
+                decimal? price = GetValidDecimal($"Enter new price (Current: {itemToEdit.Price}): ");
+                uint? minStock = GetOptionalUInt($"Enter new minimum stock (Current: {itemToEdit.MinStock ?? 0}): ");
+                uint? maxStock = GetOptionalUInt($"Enter new maximum stock (Current: {itemToEdit.MaxStock ?? 0}): ");
 
-                Console.WriteLine("The item has been updated successfully.");
+                if (!string.IsNullOrWhiteSpace(itemName)) itemToEdit.ItemName = itemName;
+                if (!string.IsNullOrWhiteSpace(categoryName))
+                    itemToEdit.CategoryId = GetOrCreateCategoryId(categoryName);
+                if (quantity.HasValue) itemToEdit.Quantity = quantity.Value;
+                if (price.HasValue) itemToEdit.Price = price.Value;
+                if (minStock.HasValue) itemToEdit.MinStock = minStock;
+                if (maxStock.HasValue) itemToEdit.MaxStock = maxStock;
+
+                FileHandler.UpdateInventoryItem(itemToEdit);
+
+                Console.WriteLine("Item updated successfully.");
             }
             else
             {
                 Console.WriteLine("That item was not found.");
             }
 
-            Console.WriteLine(mainMenuMessage);
+            Console.WriteLine("\nPress Enter to return to the main menu.");
             Console.ReadLine();
         }
 
@@ -264,16 +274,15 @@ namespace InventoryManagment.UI
             {
                 string input = ConsoleHelper.Prompt(prompt).Trim();
 
-                // If the input is empty or just whitespace, return null
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     return null;
                 }
 
-                // Try parsing the input to a uint
+
                 if (uint.TryParse(input, out uint result) && result >= 0)
                 {
-                    return result; // Return the valid uint
+                    return result;
                 }
                 else
                 {

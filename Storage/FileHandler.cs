@@ -203,6 +203,47 @@ namespace InventoryManagement.Storage
 
             Console.WriteLine($"Inventory item {item.ItemName} updated in the database.");
         }
+
+        public static InventoryItem? GetInventoryItemById(Guid itemId)
+        {
+            var itemIdString = itemId.ToString(); // Strips the curly brackets off the GUID
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string selectQuery = @"SELECT * FROM InventoryItems WHERE ItemId = @ItemId";
+
+                using (var cmd = new SQLiteCommand(selectQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ItemId", itemIdString);
+
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            var item = new InventoryItem(
+                                reader["ItemName"].ToString(),
+                                Guid.Parse(reader["CategoryId"].ToString()),
+                                Convert.ToUInt32(reader["Quantity"]),
+                                Convert.ToDecimal(reader["Price"]),
+                                reader["MinStock"] != DBNull.Value ? Convert.ToUInt32(reader["MinStock"]) : (uint?)null,
+                                reader["MaxStock"] != DBNull.Value ? Convert.ToUInt32(reader["MaxStock"]) : (uint?)null
+                            );
+
+                            item.SetItemId(Guid.Parse(reader["ItemId"].ToString()));
+
+                            return item;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+
+
 /*        public static void SaveInventoryToFile(List<InventoryItem> inventory, string filePath)
         {
             using (StreamWriter writer = new StreamWriter(filePath))
