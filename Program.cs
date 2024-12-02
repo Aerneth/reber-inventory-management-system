@@ -45,7 +45,7 @@ namespace InventoryManagment.UI
             {
                 ConsoleHelper.ShowMenu();
 
-                string? choice = ConsoleHelper.Prompt("Please select an option (1-7): ");
+                string? choice = ConsoleHelper.Prompt("Please select an option (1-5): ");
 
                 switch (choice)
                 {
