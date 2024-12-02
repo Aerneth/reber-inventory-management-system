@@ -19,10 +19,8 @@ namespace InventoryManagment.UI
                 Console.WriteLine("2. Add Item");
                 Console.WriteLine("3. Edit Item");
                 Console.WriteLine("4. Remove Item");
-                Console.WriteLine("5. Save Inventory");
-                Console.WriteLine("6. Load Inventory from File");
-                Console.WriteLine("7. Exit");
-                Console.Write("Please select an option (1-7): ");
+                Console.WriteLine("5. Exit");
+                Console.Write("Please select an option (1-5): ");
         }
 
         public static void ShowMessage(string message)
@@ -64,10 +62,6 @@ namespace InventoryManagment.UI
                         RemoveItem();
                         break;
                     case "5":
-                        break;
-                    case "6":
-                        break;
-                    case "7":
                         Console.WriteLine("Exiting RIMS...");
                         return;
                     default:
