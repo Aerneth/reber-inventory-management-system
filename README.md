@@ -8,6 +8,12 @@ Created with assitance from ChatGPT AI.
 
 ---
 
+## Scope
+
+While this is a learning project, the intent is for it to be functional. That being said, this inventory management system's scope is a one-person, hobbyist workshop. The database associated with the project is SQLite. There aren't plans to make this connect to a remote database. The resulting app is intended to be run on a local computer and will not natively have any support for remote connections. If you use this app in _your_ personal workshop or what-have-you, I would suggest being careful of data loss in the event of a drive failure. This software comes as-is without warranty - see the LICENSE file. I wouldn't suggest using this for a business or anywhere money is on the line.
+
+---
+
 ## Features (Current and Planned)
 
 - [x] Interactive console menu
