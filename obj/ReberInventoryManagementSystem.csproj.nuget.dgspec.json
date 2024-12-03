@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/home/jeff/Documents/Programming Projects/Personal Projects/ReberInventoryManagementSystem/ReberInventoryManagementSystem.csproj": {}
+    "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system\\ReberInventoryManagementSystem.csproj": {}
   },
   "projects": {
-    "/home/jeff/Documents/Programming Projects/Personal Projects/ReberInventoryManagementSystem/ReberInventoryManagementSystem.csproj": {
+    "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system\\ReberInventoryManagementSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/jeff/Documents/Programming Projects/Personal Projects/ReberInventoryManagementSystem/ReberInventoryManagementSystem.csproj",
+        "projectUniqueName": "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system\\ReberInventoryManagementSystem.csproj",
         "projectName": "ReberInventoryManagementSystem",
-        "projectPath": "/home/jeff/Documents/Programming Projects/Personal Projects/ReberInventoryManagementSystem/ReberInventoryManagementSystem.csproj",
-        "packagesPath": "/home/jeff/.nuget/packages/",
-        "outputPath": "/home/jeff/Documents/Programming Projects/Personal Projects/ReberInventoryManagementSystem/obj/",
+        "projectPath": "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system\\ReberInventoryManagementSystem.csproj",
+        "packagesPath": "C:\\Users\\JeffR\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/jeff/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\JeffR\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "/usr/lib/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -70,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.100/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

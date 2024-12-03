@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ReberInventoryManagementSystem": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\JeffR\\source\\repos\\reber-inventory-management-system"
+    }
+  }
+}
