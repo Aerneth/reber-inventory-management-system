@@ -20,15 +20,16 @@ While this is a learning project, the intent is for it to be functional. That be
 - [x] Add items to inventory
 - [x] View current inventory
 - [x] Edit existing inventory items
-- [x] Remove items from inventory
-- [x] Save and load inventory to/from a file
-- [ ] Future support for database integration
+- [ ] Remove items from inventory
+- [ ] ~~Save and load inventory to/from a file~~ Feature removed in preparation for database functionality
+- [ ] Support for database integration
+- [ ] GUI
 
 ---
 
 ## Contributing
 
-This project is primarily for personal learning and development. Contributions are closed for the reason that this software is in the public domain, and thus, any contribution could introduce issues of copywrite on software in the public domain.
+This project is primarily for personal learning and development. Contributions are closed for the reason that this software is in the public domain, and thus, any contribution could introduce issues of copyright on software in the public domain.
 
 ## License
 
