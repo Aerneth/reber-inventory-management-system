@@ -300,5 +300,31 @@ namespace InventoryManagement.Storage
             }
             Console.WriteLine($"Category '{categoryName}' inserted into the database.");
         }
+        public static void InsertSupplier(Supplier supplier)
+        {
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string insertQuery = @"
+                    INSERT INTO Suppliers (SupplierId, SupplierName, Website, Phone, Email)
+                    VALUES (@SupplierId, @SupplierName, @Website, @Phone, @Email);
+                ";
+
+                using (var cmd = new SQLiteCommand(insertQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@SupplierId", supplier.SupplierId.ToString());
+                    cmd.Parameters.AddWithValue("@SupplierName", supplier.SupplierName);
+                    cmd.Parameters.AddWithValue("@Website", supplier.Website ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Phone", supplier.Phone ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@Email", supplier.Email ?? (object)DBNull.Value);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine($"Supplier '{supplier.SupplierName}' inserted into the database.");
+        }
     }
 }

@@ -13,14 +13,15 @@ namespace InventoryManagment.UI
 
         public static void ShowMenu()
         {
-                Console.Clear();
-                Console.WriteLine("Welcome to RIMS!");
-                Console.WriteLine("1. View Inventory");
-                Console.WriteLine("2. Add Item");
-                Console.WriteLine("3. Edit Item");
-                Console.WriteLine("4. Remove Item");
-                Console.WriteLine("5. Exit");
-                Console.Write("Please select an option (1-5): ");
+            Console.Clear();
+            Console.WriteLine("Welcome to RIMS!");
+            Console.WriteLine("1. View Inventory");
+            Console.WriteLine("2. Add Item");
+            Console.WriteLine("3. Edit Item");
+            Console.WriteLine("4. Remove Item");
+            Console.WriteLine("5. Add Supplier");
+            Console.WriteLine("6. Exit");
+            Console.Write("Please select an option (1-6): ");
         }
 
         public static void ShowMessage(string message)
@@ -40,12 +41,12 @@ namespace InventoryManagment.UI
         static void Main(string[] args)
         {
             FileHandler.InitializeDatabase();
-            
+
             while (true)
             {
                 ConsoleHelper.ShowMenu();
 
-                string? choice = ConsoleHelper.Prompt("Please select an option (1-5): ");
+                string? choice = ConsoleHelper.Prompt("Please select an option (1-6): ");
 
                 switch (choice)
                 {
@@ -62,6 +63,9 @@ namespace InventoryManagment.UI
                         RemoveItem();
                         break;
                     case "5":
+                        AddSupplier();
+                        break;
+                    case "6":
                         Console.WriteLine("Exiting RIMS...");
                         return;
                     default:
@@ -70,7 +74,7 @@ namespace InventoryManagment.UI
                 }
             }
         }
-    
+
 
         static void ViewInventory()
         {
@@ -175,7 +179,7 @@ namespace InventoryManagment.UI
         {
             string itemName = ConsoleHelper.Prompt("Enter Item Name: ").Trim();
             string categoryName = ConsoleHelper.Prompt("Enter Category Name: ").Trim();
-            
+
             bool isChildCategory = ConsoleHelper.Prompt("Is this a child category? (y/n): ").Trim().ToLower() == "y";
             Guid parentCategoryId = Guid.Empty;
 
@@ -250,6 +254,32 @@ namespace InventoryManagment.UI
             FileHandler.InsertCategory(newParentCategory.CategoryId, newParentCategory.CategoryName, null);
             return newParentCategory.CategoryId;
         }
+
+        private static void AddSupplier()
+        {
+            Console.Clear();
+            Console.WriteLine("Add New Supplier");
+
+            string supplierName = ConsoleHelper.Prompt("Enter Supplier Name: ").Trim();
+            string? website = ConsoleHelper.Prompt("Enter Website (optional): ").Trim();
+            string? phone = ConsoleHelper.Prompt("Enter Phone Number (optional): ").Trim();
+            string? email = ConsoleHelper.Prompt("Enter Email (optional): ").Trim();
+
+            if (string.IsNullOrWhiteSpace(supplierName))
+            {
+                Console.WriteLine("Supplier name is required.");
+                return;
+            }
+
+            Supplier newSupplier = new Supplier(supplierName, website, phone, email);
+
+            FileHandler.InsertSupplier(newSupplier);
+
+            Console.WriteLine($"Supplier '{newSupplier.SupplierName}' added successfully!");
+            Console.WriteLine("\nPress Enter to return to the main menu.");
+            Console.ReadLine();
+        }
+
 
         private static Guid GetValidGuid(string prompt)
         {

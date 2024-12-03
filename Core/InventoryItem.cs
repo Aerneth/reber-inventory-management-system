@@ -67,3 +67,34 @@ namespace InventoryManagement.Core
         }
     }
 }
+
+namespace InventoryManagement.Core
+{
+    public class Supplier
+    {
+        public Guid SupplierId { get; private set; }
+        public string SupplierName { get; set; }
+        public string? Website { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+
+        public Supplier(string supplierName, string? website = null, string? phone = null, string? email = null)
+        {
+            SupplierId = Guid.NewGuid();
+            SupplierName = supplierName;
+            Website = website;
+            Phone = phone;
+            Email = email;
+        }
+
+        public void SetSupplierId(Guid id)
+        {
+            SupplierId = id;
+        }
+
+        public override string ToString()
+        {
+            return $"Supplier: {SupplierName}, Website: {Website}, Phone: {Phone}, Email: {Email}";
+        }
+    }
+}
