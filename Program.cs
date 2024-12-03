@@ -20,8 +20,9 @@ namespace InventoryManagment.UI
             Console.WriteLine("3. Edit Item");
             Console.WriteLine("4. Remove Item");
             Console.WriteLine("5. Add Supplier");
-            Console.WriteLine("6. Exit");
-            Console.Write("Please select an option (1-6): ");
+            Console.WriteLine("6. View All Suppliers");
+            Console.WriteLine("7. Exit");
+            Console.Write("Please select an option (1-7): ");
         }
 
         public static void ShowMessage(string message)
@@ -46,7 +47,7 @@ namespace InventoryManagment.UI
             {
                 ConsoleHelper.ShowMenu();
 
-                string? choice = ConsoleHelper.Prompt("Please select an option (1-6): ");
+                string? choice = ConsoleHelper.Prompt("Please select an option (1-7): ");
 
                 switch (choice)
                 {
@@ -66,6 +67,9 @@ namespace InventoryManagment.UI
                         AddSupplier();
                         break;
                     case "6":
+                        ViewAllSuppliers();
+                        break;
+                    case "7":
                         Console.WriteLine("Exiting RIMS...");
                         return;
                     default:
@@ -279,8 +283,29 @@ namespace InventoryManagment.UI
             Console.WriteLine("\nPress Enter to return to the main menu.");
             Console.ReadLine();
         }
+        private static void ViewAllSuppliers()
+        {
+            Console.Clear();
+            Console.WriteLine("All Suppliers:\n");
 
+            // Retrieve suppliers from the database
+            var suppliers = FileHandler.GetAllSuppliers();
 
+            if (suppliers.Count == 0)
+            {
+                Console.WriteLine("No suppliers found.");
+            }
+            else
+            {
+                foreach (var supplier in suppliers)
+                {
+                    Console.WriteLine(supplier);
+                }
+            }
+
+            Console.WriteLine("\nPress Enter to return to the main menu.");
+            Console.ReadLine();
+        }
         private static Guid GetValidGuid(string prompt)
         {
             while (true)

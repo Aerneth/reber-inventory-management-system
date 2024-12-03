@@ -155,7 +155,7 @@ namespace InventoryManagement.Storage
 
                             var item = new InventoryItem(itemName, categoryId, quantity, price, minStock, maxStock);
 
-                            
+
                             if (reader["ItemId"] != DBNull.Value)
                             {
                                 item.SetItemId(Guid.Parse(reader["ItemId"].ToString()));
@@ -325,6 +325,39 @@ namespace InventoryManagement.Storage
                 }
             }
             Console.WriteLine($"Supplier '{supplier.SupplierName}' inserted into the database.");
+        }
+        public static List<Supplier> GetAllSuppliers()
+        {
+            var suppliers = new List<Supplier>();
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string selectQuery = "SELECT * FROM Suppliers";
+
+                using (var cmd = new SQLiteCommand(selectQuery, connection))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var supplier = new Supplier(
+                                supplierName: reader["SupplierName"].ToString(),
+                                website: reader["Website"] != DBNull.Value ? reader["Website"].ToString() : null,
+                                phone: reader["Phone"] != DBNull.Value ? reader["Phone"].ToString() : null,
+                                email: reader["Email"] != DBNull.Value ? reader["Email"].ToString() : null
+                            );
+
+                            supplier.SetSupplierId(Guid.Parse(reader["SupplierId"].ToString()));
+                            suppliers.Add(supplier);
+                        }
+                    }
+                }
+            }
+
+            return suppliers;
         }
     }
 }
