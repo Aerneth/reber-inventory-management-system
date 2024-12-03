@@ -356,8 +356,76 @@ namespace InventoryManagement.Storage
                     }
                 }
             }
-
             return suppliers;
+        }
+        public static void AssociateItemWithSupplier(Guid itemId, Guid supplierId)
+        {
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string insertQuery = @"
+                    INSERT INTO ItemSuppliers (ItemId, SupplierId)
+                    VALUES (@ItemId, @SupplierId);
+                ";
+
+                using (var cmd = new SQLiteCommand(insertQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@ItemId", itemId.ToString());
+                    cmd.Parameters.AddWithValue("@SupplierId", supplierId.ToString());
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            Console.WriteLine($"Item with ID '{itemId}' associated with supplier with ID '{supplierId}'.");
+        }
+        public static List<InventoryItem> GetItemsBySupplier(Guid supplierId)
+        {
+            var items = new List<InventoryItem>();
+            var connectionString = GetDatabaseConnectionString();
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string selectQuery = @"
+                    SELECT i.*
+                    FROM InventoryItems i
+                    INNER JOIN ItemSuppliers isup ON i.ItemId = isup.ItemId
+                    WHERE isup.SupplierId = @SupplierId;
+                ";
+
+                using (var cmd = new SQLiteCommand(selectQuery, connection))
+                {
+                    cmd.Parameters.AddWithValue("@SupplierId", supplierId.ToString());
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var itemName = reader["ItemName"].ToString();
+                            var categoryId = Guid.Parse(reader["CategoryId"].ToString());
+                            var quantity = Convert.ToUInt32(reader["Quantity"]);
+                            var price = Convert.ToDecimal(reader["Price"]);
+                            var minStock = reader["MinStock"] != DBNull.Value ? Convert.ToUInt32(reader["MinStock"]) : (uint?)null;
+                            var maxStock = reader["MaxStock"] != DBNull.Value ? Convert.ToUInt32(reader["MaxStock"]) : (uint?)null;
+
+                            var item = new InventoryItem(itemName, categoryId, quantity, price, minStock, maxStock);
+
+                            // Use the SetItemId method to set the ItemId
+                            if (reader["ItemId"] != DBNull.Value)
+                            {
+                                item.SetItemId(Guid.Parse(reader["ItemId"].ToString()));
+                            }
+
+                            items.Add(item);
+                        }
+                    }
+                }
+            }
+            return items;
         }
     }
 }

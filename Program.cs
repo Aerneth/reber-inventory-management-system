@@ -21,8 +21,10 @@ namespace InventoryManagment.UI
             Console.WriteLine("4. Remove Item");
             Console.WriteLine("5. Add Supplier");
             Console.WriteLine("6. View All Suppliers");
-            Console.WriteLine("7. Exit");
-            Console.Write("Please select an option (1-7): ");
+            Console.WriteLine("7. Associate Supplier with Item");
+            Console.WriteLine("8. View Items by Supplier");
+            Console.WriteLine("9. Exit");
+            Console.Write("Please select an option (1-9): ");
         }
 
         public static void ShowMessage(string message)
@@ -47,7 +49,7 @@ namespace InventoryManagment.UI
             {
                 ConsoleHelper.ShowMenu();
 
-                string? choice = ConsoleHelper.Prompt("Please select an option (1-7): ");
+                string? choice = ConsoleHelper.Prompt("Please select an option (1-9): ");
 
                 switch (choice)
                 {
@@ -70,6 +72,12 @@ namespace InventoryManagment.UI
                         ViewAllSuppliers();
                         break;
                     case "7":
+                        AssociateSupplierWithItem();
+                        break;
+                    case "8":
+                        ViewItemsBySupplier();
+                        break;
+                    case "9":
                         Console.WriteLine("Exiting RIMS...");
                         return;
                     default:
@@ -300,6 +308,90 @@ namespace InventoryManagment.UI
                 foreach (var supplier in suppliers)
                 {
                     Console.WriteLine(supplier);
+                }
+            }
+
+            Console.WriteLine("\nPress Enter to return to the main menu.");
+            Console.ReadLine();
+        }
+        private static void AssociateSupplierWithItem()
+        {
+            Console.Clear();
+            Console.WriteLine("Associate Supplier with Item\n");
+
+            var items = FileHandler.GetAllInventoryItems();
+            if (items.Count == 0)
+            {
+                Console.WriteLine("No items found. Please add items first.");
+                return;
+            }
+
+            Console.WriteLine("Available Items:");
+            foreach (var item in items)
+            {
+                Console.WriteLine($"- {item.ItemId}: {item.ItemName}");
+            }
+
+            Guid itemId = GetValidGuid("Enter the ID of the item to associate with a supplier: ");
+
+            var suppliers = FileHandler.GetAllSuppliers();
+            if (suppliers.Count == 0)
+            {
+                Console.WriteLine("No suppliers found. Please add suppliers first.");
+                return;
+            }
+
+            Console.WriteLine("\nAvailable Suppliers:");
+            foreach (var supplier in suppliers)
+            {
+                Console.WriteLine($"- {supplier.SupplierId}: {supplier.SupplierName}");
+            }
+
+            Guid supplierId = GetValidGuid("Enter the ID of the supplier to associate with the selected item: ");
+
+            FileHandler.AssociateItemWithSupplier(itemId, supplierId);
+
+            Console.WriteLine($"Supplier successfully associated with item.");
+            Console.WriteLine("\nPress Enter to return to the main menu.");
+            Console.ReadLine();
+        }
+        private static void ViewItemsBySupplier()
+        {
+            Console.Clear();
+            Console.WriteLine("View Items by Supplier\n");
+
+            // Get all suppliers
+            var suppliers = FileHandler.GetAllSuppliers();
+            if (suppliers.Count == 0)
+            {
+                Console.WriteLine("No suppliers found. Please add suppliers first.");
+                Console.WriteLine("\nPress Enter to return to the main menu.");
+                Console.ReadLine();
+                return;
+            }
+
+            // Display suppliers
+            Console.WriteLine("Available Suppliers:");
+            foreach (var supplier in suppliers)
+            {
+                Console.WriteLine($"- {supplier.SupplierId}: {supplier.SupplierName}");
+            }
+
+            // Prompt user to select a supplier
+            Guid supplierId = GetValidGuid("Enter the ID of the supplier to view associated items: ");
+
+            // Get items associated with the supplier
+            var items = FileHandler.GetItemsBySupplier(supplierId);
+            if (items.Count == 0)
+            {
+                Console.WriteLine("\nNo items are associated with this supplier.");
+            }
+            else
+            {
+                Console.WriteLine("\nItems Associated with Supplier:");
+                foreach (var item in items)
+                {
+                    Console.WriteLine($"- {item}");
                 }
             }
 
